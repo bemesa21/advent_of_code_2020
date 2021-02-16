@@ -12,11 +12,12 @@ defmodule AdventOfCode.Day02Test do
     assert result == 2
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
-    result = Day02.part2(input)
+    result =
+    ["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"]
+    |> Enum.map(&AdventOfCode.Utils.format_params(&1))
+    |> Day02.part2()
 
-    assert result
+    assert result == 1
   end
 end
