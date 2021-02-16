@@ -1,20 +1,21 @@
 defmodule AdventOfCode.Day02Test do
   use ExUnit.Case
 
-  import AdventOfCode.Day02
+  alias AdventOfCode.Day02
 
-  @tag :skip
   test "part1" do
-    input = nil
-    result = part1(input)
+    result =
+      ["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"]
+      |> Enum.map(&AdventOfCode.Utils.format_params(&1))
+      |> Day02.part1()
 
-    assert result
+    assert result == 2
   end
 
   @tag :skip
   test "part2" do
     input = nil
-    result = part2(input)
+    result = Day02.part2(input)
 
     assert result
   end
