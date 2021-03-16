@@ -2,9 +2,8 @@ defmodule AdventOfCode.Day06 do
   def part1(args) do
     args
     |> answers_by_groups()
-    |> Stream.map(&find_questions_ocurrences(&1))
-    |> Stream.map(&count_anyone_answer_yes(&1))
-    |> Enum.to_list()
+    |> Enum.map(&find_questions_ocurrences(&1))
+    |> Enum.map(&count_anyone_answer_yes(&1))
     |> Enum.sum()
   end
 
