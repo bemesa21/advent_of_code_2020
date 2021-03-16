@@ -2,11 +2,11 @@ defmodule AdventOfCode.Day05 do
   def part1(input) do
     rows = Enum.to_list(0..127)
     columns = Enum.to_list(0..7)
+
     input
     |> format_input()
     |> Enum.map(&find_id(&1, rows, columns))
     |> Enum.max()
-
   end
 
   def part2(args) do
@@ -28,7 +28,7 @@ defmodule AdventOfCode.Day05 do
         {"BFFFBBF", "RRR"}
 
   """
-  def split_letters(<<r_letters :: binary-size(7)>> <> c_letters) do
+  def split_letters(<<r_letters::binary-size(7)>> <> c_letters) do
     {r_letters, c_letters}
   end
 

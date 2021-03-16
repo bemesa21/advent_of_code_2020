@@ -9,7 +9,9 @@ defmodule Mix.Tasks.D02.P2 do
 
     if Enum.member?(args, "-b"),
       do:
-        Benchee.run(%{part_2: fn -> input |> AdventOfCode.Utils.format_input(:two) |> Day02.part2() end}),
+        Benchee.run(%{
+          part_2: fn -> input |> AdventOfCode.Utils.format_input(:two) |> Day02.part2() end
+        }),
       else:
         input
         |> AdventOfCode.Utils.format_input(:two)
