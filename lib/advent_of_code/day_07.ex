@@ -11,27 +11,77 @@ defmodule AdventOfCode.Day07 do
     count_inner_bags(sg_content, rules)
   end
 
+  @doc """
+    Creates a map with all the rules
+    ## Examples
+
+        iex> format_bag("light red bags contain 1 bright white bag, 2 muted yellow bags.\n
+    dark orange bags..." )
+          %{
+            "light red" => %{
+              "bright white" => 1
+              "muted yellow" => 2
+            },
+            "dark orange" => %{
+              ...
+            }
+          }
+  """
   def format_rules(input) do
     input
     |> String.split("\n", trim: true)
     |> Enum.reduce(%{}, &Map.merge(AdventOfCode.Day07.format_bag(&1), &2))
-    |> IO.inspect()
   end
 
-  def format_bag(content) do
-    [bag, content] =
-      content
+  @doc """
+  Formats a bag description of type: 
+  "shiny gold bags contain 2 dark red bags."
+  into a map.
+
+  ## Examples
+
+      iex> format_bag("shiny gold bags contain 2 dark red bags.")
+        %{
+          "shiny gold" => %{
+            "dark red" => 2
+          }
+        }
+
+      
+      iex> format_bag("dim tan bags contain no other bags")
+        %{ "dim tan" => %{}}
+  """
+  def format_bag(description) do
+    [bag_color, content] =
+      description
       |> String.replace(["bag", "bags"], "")
       |> String.split("contain")
 
+    # ~r/[0-9]+[a-z\s]*/ =  "1 bright white "
     formatted_content =
       Regex.scan(~r/[0-9]+[a-z\s]*/, content)
       |> List.flatten()
       |> Enum.reduce(%{}, &format_content/2)
 
-    %{String.trim(bag) => formatted_content}
+    %{String.trim(bag_color) => formatted_content}
   end
 
+  @doc """
+  Returns a map of type color => num_of_bags
+  ## Examples
+
+      iex> format_content("2 dark red ", %{})
+        %{
+          "dark red" => 2
+        }
+
+      
+      iex> format_bag("3 blue ", %{"dark red" => 2})
+        %{
+          "dark red" => 2
+          "blue" => 3
+        }
+  """
   def format_content(<<number::binary-size(1)>> <> color, content) do
     trimmed_color = String.trim(color)
     Map.put(content, trimmed_color, String.to_integer(number))
@@ -57,8 +107,8 @@ defmodule AdventOfCode.Day07 do
 
   def count_inner_bags(inner_bags, rules) do
     Enum.reduce(inner_bags, 0, fn {color, number}, acc ->
-      some = rules[color]
-      result = count_inner_bags(some, rules)
+      inner_bag_content = rules[color]
+      result = count_inner_bags(inner_bag_content, rules)
       acc + number + number * result
     end)
   end
