@@ -5,7 +5,11 @@ defmodule AdventOfCode.Day09 do
     |> find_the_wrong_number(preamble, n)
   end
 
-  def part2(args) do
+  def part2(input, preamble, n) do
+    formatted_input = format_input(input) 
+    num = find_the_wrong_number(formatted_input, preamble, n)
+    result = search_contiguous_numbers(formatted_input, num)
+    Enum.min(result) + Enum.max(result)
   end
 
   def format_input(input) do

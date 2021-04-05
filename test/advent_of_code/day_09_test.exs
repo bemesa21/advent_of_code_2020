@@ -11,12 +11,12 @@ defmodule AdventOfCode.Day09Test do
     assert result == 127
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
-    result = Day09.part2(input)
-
-    assert result
+    input = "35\n20\n15\n25\n47\n40\n62\n55\n65\n95\n102\n117\n150\n182\n127\n219\n299\n277\n309\n576"
+    preamble = 5
+    how_many_previous = 5
+    result = Day09.part2(input, preamble, how_many_previous)
+    assert result == 62 
   end
 
   test "format_input/1 should return a list of numbers" do
