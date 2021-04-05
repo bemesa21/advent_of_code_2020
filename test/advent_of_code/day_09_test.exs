@@ -99,4 +99,11 @@ defmodule AdventOfCode.Day09Test do
     result = Day09.contiguous_sum(numbers, {acc, x})
     assert Enum.reverse(result) == [2,2,2,1]
   end
+
+  test "iterate until find contiguous numbers that sum 4, even if they are not at the start of the list" do
+    numbers =  [1,1,1,5,9,1,2,1]
+    x = 4
+    result = Day09.search_contiguous_numbers(numbers, x)
+    assert Enum.reverse(result) == [1,2,1]
+  end
 end

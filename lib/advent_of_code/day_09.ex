@@ -64,4 +64,15 @@ defmodule AdventOfCode.Day09 do
       sum == num -> [hd | acc]
     end
   end
+
+  def search_contiguous_numbers([], _num), do: false
+
+  def search_contiguous_numbers([_hd | tail] = numbers, num) do
+    result = contiguous_sum(numbers, {[], num})
+    if result do
+      result
+    else
+      search_contiguous_numbers(tail,num)
+    end
+  end
 end
