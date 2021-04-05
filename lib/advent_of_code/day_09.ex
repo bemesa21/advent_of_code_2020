@@ -18,5 +18,13 @@ defmodule AdventOfCode.Day09 do
   end
 
 
-  
+  def are_two_numbers_add_up_to_n?([hd | []], n), do: false
+
+  def are_two_numbers_add_up_to_n?([_hd | tail] = numbers, n) do
+    if add_to?(numbers, n) do 
+      true
+    else
+      add_to?(tail, n)
+    end
+  end
 end

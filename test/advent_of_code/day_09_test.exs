@@ -41,4 +41,19 @@ defmodule AdventOfCode.Day09Test do
     result = Day09.add_to?(numbers, n) 
     assert result == false
   end
+
+  test "return true if two of the elements of a list of integers add to n" do 
+    n = 7
+    numbers = [1,2,3,4,5]
+    result = Day09.are_two_numbers_add_up_to_n?(numbers, n) 
+    assert result == true
+  
+  end
+
+  test "return false if none two elements of a list of integers add to n" do 
+    n = 100
+    numbers = [1,2,3,4,5]
+    result = Day09.are_two_numbers_add_up_to_n?(numbers, n) 
+    assert result == false
+  end
 end
