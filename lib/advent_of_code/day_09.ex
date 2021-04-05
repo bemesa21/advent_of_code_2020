@@ -17,7 +17,6 @@ defmodule AdventOfCode.Day09 do
     end)
   end
 
-
   def are_two_numbers_add_up_to_n?([hd | []], n), do: false
 
   def are_two_numbers_add_up_to_n?([_hd | tail] = numbers, n) do
@@ -25,6 +24,15 @@ defmodule AdventOfCode.Day09 do
       true
     else
       add_to?(tail, n)
+    end
+  end
+
+  def get_last_25_numbers(numbers, position) do
+    if position < 25 do
+      {first, _ } = Enum.split(numbers,position)
+      first
+    else 
+      Enum.slice(numbers, position - 25, 25)
     end
   end
 end
