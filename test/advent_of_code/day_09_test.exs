@@ -60,7 +60,8 @@ defmodule AdventOfCode.Day09Test do
   test "given a list of numbers and an existent position n < 25, should return numbers from pos 0 to n-1" do 
     pos = 8
     numbers = [1,2,3,4,5,6,7,8,9,10]
-    result = Day09.get_last_25_numbers(numbers, pos) 
+    n = 25
+    result = Day09.get_last_n_numbers(numbers, pos, n) 
     assert result == [1,2,3,4,5,6,7,8]
   end
   
@@ -68,7 +69,8 @@ defmodule AdventOfCode.Day09Test do
   test "given a list of numbers and a position=25, should return the fisrt 25 numbers" do 
     pos = 25
     numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
-    result = Day09.get_last_25_numbers(numbers, pos) 
+    n = 25
+    result = Day09.get_last_n_numbers(numbers, pos, n) 
     assert length(result) == 25
     assert result == [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
   end
@@ -76,7 +78,8 @@ defmodule AdventOfCode.Day09Test do
   test "given a list with length x >= 25 and a position > 25, should return the numbers in range n-25 - n-1" do
     pos = 27
     numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28]
-    result = Day09.get_last_25_numbers(numbers, pos) 
+    n = 25
+    result = Day09.get_last_n_numbers(numbers, pos, n) 
     assert length(result) == 25
     assert result == [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
   end 
@@ -84,7 +87,8 @@ defmodule AdventOfCode.Day09Test do
   test "return 300, it isn't the sum of two numbers in the last 25 numbers starting from 5 preamble-numbers" do
     numbers = [1,2,3,4,5,300]
     preamble = 5
-    result = Day09.find_the_wrong_number(numbers, preamble)
+    n = 25
+    result = Day09.find_the_wrong_number(numbers, preamble, n)
     assert result == 300
   end
 end

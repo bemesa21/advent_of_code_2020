@@ -1,5 +1,5 @@
 defmodule AdventOfCode.Day09 do
-  def part1(args) do
+  def part1(args, preamble) do
   end
 
   def part2(args) do
@@ -29,20 +29,20 @@ defmodule AdventOfCode.Day09 do
     end
   end
 
-  def get_last_25_numbers(numbers, position) do
-    if position < 25 do
+  def get_last_n_numbers(numbers, position, n) do
+    if position < n do
       {first, _ } = Enum.split(numbers,position)
       first
     else 
-      Enum.slice(numbers, position - 25, 25)
+      Enum.slice(numbers, position - n, n)
     end
   end
 
-  def find_the_wrong_number(numbers, preamble) do
+  def find_the_wrong_number(numbers, preamble, n) do
     positions = preamble .. length(numbers) - 2
     first_number = Enum.at(numbers, preamble) 
     Enum.reduce_while(positions, first_number, fn x, acc ->
-      last_25 = get_last_25_numbers(numbers, x - 1)
+      last_25 = get_last_n_numbers(numbers, x - 1, n)
       if are_two_numbers_add_up_to_n?(last_25, acc) do
          {:cont, Enum.at(numbers, x)}
       else
