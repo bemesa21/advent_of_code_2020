@@ -1,5 +1,8 @@
 defmodule AdventOfCode.Day09 do
-  def part1(args, preamble) do
+  def part1(input, preamble, n) do
+    input
+    |> format_input()
+    |> find_the_wrong_number(preamble, n)
   end
 
   def part2(args) do
@@ -46,7 +49,7 @@ defmodule AdventOfCode.Day09 do
       if are_two_numbers_add_up_to_n?(last_25, acc) do
          {:cont, Enum.at(numbers, x)}
       else
-         {:halt, Enum.at(numbers, x)}
+         {:halt, acc}
       end
     end)
   
