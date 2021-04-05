@@ -80,4 +80,11 @@ defmodule AdventOfCode.Day09Test do
     assert length(result) == 25
     assert result == [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
   end 
+
+  test "return 300, it isn't the sum of two numbers in the last 25 numbers starting from 5 preamble-numbers" do
+    numbers = [1,2,3,4,5,300]
+    preamble = 5
+    result = Day09.find_the_wrong_number(numbers, preamble)
+    assert result == 300
+  end
 end

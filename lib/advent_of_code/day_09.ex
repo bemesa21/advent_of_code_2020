@@ -17,13 +17,15 @@ defmodule AdventOfCode.Day09 do
     end)
   end
 
+  def are_two_numbers_add_up_to_n?([], n), do: false
+
   def are_two_numbers_add_up_to_n?([hd | []], n), do: false
 
   def are_two_numbers_add_up_to_n?([_hd | tail] = numbers, n) do
     if add_to?(numbers, n) do 
       true
     else
-      add_to?(tail, n)
+      are_two_numbers_add_up_to_n?(tail, n)
     end
   end
 
@@ -34,5 +36,19 @@ defmodule AdventOfCode.Day09 do
     else 
       Enum.slice(numbers, position - 25, 25)
     end
+  end
+
+  def find_the_wrong_number(numbers, preamble) do
+    positions = preamble .. length(numbers) - 2
+    first_number = Enum.at(numbers, preamble) 
+    Enum.reduce_while(positions, first_number, fn x, acc ->
+      last_25 = get_last_25_numbers(numbers, x - 1)
+      if are_two_numbers_add_up_to_n?(last_25, acc) do
+         {:cont, Enum.at(numbers, x)}
+      else
+         {:halt, Enum.at(numbers, x)}
+      end
+    end)
+  
   end
 end
