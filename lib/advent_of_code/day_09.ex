@@ -52,6 +52,16 @@ defmodule AdventOfCode.Day09 do
          {:halt, acc}
       end
     end)
-  
+  end
+
+  def contiguous_sum([], {acc, num}), do: false
+
+  def contiguous_sum([hd | tail], {acc, num}) do
+    sum = Enum.sum(acc) + hd
+    cond do
+      sum > num -> false
+      sum < num -> contiguous_sum(tail, {[hd | acc], num})
+      sum == num -> [hd | acc]
+    end
   end
 end

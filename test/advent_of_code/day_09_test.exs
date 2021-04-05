@@ -91,4 +91,12 @@ defmodule AdventOfCode.Day09Test do
     result = Day09.find_the_wrong_number(numbers, preamble, n)
     assert result == 300
   end
+
+  test "if the first contiguous numbers of a list sum X returns a list with the first n numbers" do
+    numbers =  [2,2,2,1,5,6]
+    acc = []
+    x = 7
+    result = Day09.contiguous_sum(numbers, {acc, x})
+    assert Enum.reverse(result) == [2,2,2,1]
+  end
 end
