@@ -54,7 +54,7 @@ defmodule AdventOfCode.Day09Test do
     pos = 8
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     n = 25
-    assert  Day09.get_last_n_numbers(numbers, pos, n) == [1, 2, 3, 4, 5, 6, 7, 8]
+    assert Day09.get_last_n_numbers(numbers, pos, n) == [1, 2, 3, 4, 5, 6, 7, 8]
   end
 
   test "given a list of numbers and a position=25, should return the fisrt 25 numbers" do

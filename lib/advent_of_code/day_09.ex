@@ -19,43 +19,36 @@ defmodule AdventOfCode.Day09 do
   end
 
   def add_to?([hd | tail] = _numbers, n) do
-    Enum.reduce_while(tail, false, fn x, acc ->
+    Enum.reduce_while(tail, false, fn x, _acc ->
       if hd + x != n, do: {:cont, false}, else: {:halt, true}
     end)
   end
 
-  def are_two_numbers_add_up_to_n?([], n), do: false
+  def are_two_numbers_add_up_to_n?([], _n), do: false
 
-  def are_two_numbers_add_up_to_n?([hd | []], n), do: false
+  def are_two_numbers_add_up_to_n?([_hd | []], _n), do: false
 
   def are_two_numbers_add_up_to_n?([_hd | tail] = numbers, n) do
-    if add_to?(numbers, n) do
-      true
-    else
-      are_two_numbers_add_up_to_n?(tail, n)
-    end
+    add_to?(numbers, n) || are_two_numbers_add_up_to_n?(tail, n)
   end
 
   def get_last_n_numbers(numbers, position, n) do
-    if position < n do
-      {first, _} = Enum.split(numbers, position)
-      first
-    else
-      Enum.slice(numbers, position - n, n)
-    end
+    {initial_index, final_index} = if position < n, do: {0, position}, else: {position - n, n}
+    Enum.slice(numbers, initial_index, final_index)
   end
 
   def find_the_wrong_number(numbers, preamble, n) do
-    positions = preamble..(length(numbers) - 2)
+    positions = preamble..(length(numbers) - 1)
     first_number = Enum.at(numbers, preamble)
 
     Enum.reduce_while(positions, first_number, fn x, acc ->
-      last_25 = get_last_n_numbers(numbers, x - 1, n)
+      last_25 = get_last_n_numbers(numbers, x, n)
+      num = Enum.at(numbers, x)
 
-      if are_two_numbers_add_up_to_n?(last_25, acc) do
-        {:cont, Enum.at(numbers, x)}
+      if are_two_numbers_add_up_to_n?(last_25, num) do
+        {:cont, false}
       else
-        {:halt, acc}
+        {:halt, num}
       end
     end)
   end
@@ -75,12 +68,6 @@ defmodule AdventOfCode.Day09 do
   def search_contiguous_numbers([], _num), do: false
 
   def search_contiguous_numbers([_hd | tail] = numbers, num) do
-    result = contiguous_sum(numbers, {[], num})
-
-    if result do
-      result
-    else
-      search_contiguous_numbers(tail, num)
-    end
+    contiguous_sum(numbers, {[], num}) || search_contiguous_numbers(tail, num)
   end
 end
