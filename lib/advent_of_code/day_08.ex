@@ -3,14 +3,8 @@ defmodule AdventOfCode.Day08 do
 
   def part1(input) do
     instructions = format_input(input)
-
-    params = %ExecutionValues{
-      counter: 0,
-      accumulator: 0,
-      instruction: instructions[0]
-    }
-
-    {:incorrect, accumulator} = process_program(instructions, params)
+    initial_values = _initial_values(instructions[0])
+    {:incorrect, accumulator} = process_program(instructions, initial_values)
 
     accumulator
   end
@@ -21,35 +15,35 @@ defmodule AdventOfCode.Day08 do
     |> fix_file()
   end
 
-  def fix_file(instructions) do
-    Enum.reduce_while(instructions, instructions, fn {index, instruction}, accumulator ->
-      if instruction.instruction == "jmp" or instruction.instruction == "nop" do
-        modified_instruction =
-          if instruction.instruction == "nop" do
-            modified_instruction =
-              Map.put(accumulator, index, %{instruction | instruction: "jmp"})
-          else
-            modified_instruction =
-              Map.put(accumulator, index, %{instruction | instruction: "nop"})
-          end
+  defp _initial_values(instruction) do
+    params = %ExecutionValues{
+      counter: 0,
+      accumulator: 0,
+      instruction: instruction
+    }
+  end
 
-        params = %ExecutionValues{
-          counter: 0,
-          accumulator: 0,
-          instruction: modified_instruction[0]
-        }
+  defp fix_file(instructions) do
+    Enum.reduce_while(instructions, instructions, fn
+      {index, %{instruction: "acc"}}, instr ->
+        {:cont, instr}
 
-        {result, num} = process_program(modified_instruction, params)
+      {index, instruction}, instr ->
+        IO.inspect instr
+        {result, num} = process_modified_program(instr, instruction, index)
 
-        if result == :incorrect do
-          {:cont, accumulator}
-        else
-          {:halt, num}
-        end
-      else
-        {:cont, accumulator}
-      end
+        if result == :incorrect, do: {:cont, instr}, else: {:halt, num}
     end)
+  end
+
+  defp process_modified_program(instructions, instruction, index) do
+    new_instruction = if instruction.instruction == "nop", do: "jmp", else: "nop"
+    modified_instructions =
+      Map.put(instructions, index, %{instruction | instruction: new_instruction})
+
+    initial_process_values = _initial_values(modified_instructions[0])
+
+    process_program(modified_instructions, initial_process_values)
   end
 
   def format_input(input) do
