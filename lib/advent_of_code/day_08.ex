@@ -16,7 +16,7 @@ defmodule AdventOfCode.Day08 do
   end
 
   defp _initial_values(instruction) do
-    params = %ExecutionValues{
+    %ExecutionValues{
       counter: 0,
       accumulator: 0,
       instruction: instruction
@@ -25,11 +25,10 @@ defmodule AdventOfCode.Day08 do
 
   defp fix_file(instructions) do
     Enum.reduce_while(instructions, instructions, fn
-      {index, %{instruction: "acc"}}, instr ->
+      {_index, %{op_code: "acc"}}, instr ->
         {:cont, instr}
 
       {index, instruction}, instr ->
-        IO.inspect instr
         {result, num} = process_modified_program(instr, instruction, index)
 
         if result == :incorrect, do: {:cont, instr}, else: {:halt, num}
@@ -37,9 +36,9 @@ defmodule AdventOfCode.Day08 do
   end
 
   defp process_modified_program(instructions, instruction, index) do
-    new_instruction = if instruction.instruction == "nop", do: "jmp", else: "nop"
+    new_op_code = if instruction.op_code == "nop", do: "jmp", else: "nop"
     modified_instructions =
-      Map.put(instructions, index, %{instruction | instruction: new_instruction})
+      Map.put(instructions, index, %{instruction | op_code: new_op_code})
 
     initial_process_values = _initial_values(modified_instructions[0])
 
@@ -60,21 +59,21 @@ defmodule AdventOfCode.Day08 do
     case instruction do
       "jmp " <> num ->
         %{
-          instruction: "jmp",
+          op_code: "jmp",
           number: String.to_integer(num),
           visited?: false
         }
 
       "acc " <> num ->
         %{
-          instruction: "acc",
+          op_code: "acc",
           number: String.to_integer(num),
           visited?: false
         }
 
       "nop " <> num ->
         %{
-          instruction: "nop",
+          op_code: "nop",
           visited?: false,
           number: String.to_integer(num)
         }
@@ -99,7 +98,7 @@ defmodule AdventOfCode.Day08 do
     process_program(instructions, execution_values)
   end
 
-  defp process_instruction(instructions, %{instruction: "acc", number: number}, execution_values) do
+  defp process_instruction(instructions, %{op_code: "acc", number: number}, execution_values) do
     %ExecutionValues{
       counter: execution_values.counter + 1,
       accumulator: execution_values.accumulator + number,
@@ -107,7 +106,7 @@ defmodule AdventOfCode.Day08 do
     }
   end
 
-  defp process_instruction(instructions, %{instruction: "jmp", number: number}, execution_values) do
+  defp process_instruction(instructions, %{op_code: "jmp", number: number}, execution_values) do
     %ExecutionValues{
       counter: execution_values.counter + number,
       accumulator: execution_values.accumulator,
@@ -115,7 +114,7 @@ defmodule AdventOfCode.Day08 do
     }
   end
 
-  defp process_instruction(instructions, %{instruction: "nop"}, execution_values) do
+  defp process_instruction(instructions, %{op_code: "nop"}, execution_values) do
     %ExecutionValues{
       counter: execution_values.counter + 1,
       accumulator: execution_values.accumulator,

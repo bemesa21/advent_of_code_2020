@@ -20,7 +20,7 @@ defmodule AdventOfCode.Day08Test do
     result = Day08.format_instruction("jmp -3")
 
     assert result == %{
-             instruction: "jmp",
+             op_code: "jmp",
              number: -3,
              visited?: false
            }
@@ -30,7 +30,7 @@ defmodule AdventOfCode.Day08Test do
     result = Day08.format_instruction("acc -3")
 
     assert result == %{
-             instruction: "acc",
+             op_code: "acc",
              number: -3,
              visited?: false
            }
@@ -40,7 +40,7 @@ defmodule AdventOfCode.Day08Test do
     result = Day08.format_instruction("nop -0")
 
     assert result == %{
-             instruction: "nop",
+             op_code: "nop",
              visited?: false,
              number: 0
            }
@@ -52,12 +52,12 @@ defmodule AdventOfCode.Day08Test do
     assert result ==
              %{
                0 => %{
-                 instruction: "acc",
+                 op_code: "acc",
                  number: -3,
                  visited?: false
                },
                1 => %{
-                 instruction: "nop",
+                 op_code: "nop",
                  visited?: false,
                  number: 0
                }
