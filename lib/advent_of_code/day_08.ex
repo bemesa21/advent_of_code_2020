@@ -15,36 +15,6 @@ defmodule AdventOfCode.Day08 do
     |> fix_file()
   end
 
-  defp _initial_values(instruction) do
-    %ExecutionValues{
-      counter: 0,
-      accumulator: 0,
-      instruction: instruction
-    }
-  end
-
-  defp fix_file(instructions) do
-    Enum.reduce_while(instructions, instructions, fn
-      {_index, %{op_code: "acc"}}, instr ->
-        {:cont, instr}
-
-      {index, instruction}, instr ->
-        {result, num} = process_modified_program(instr, instruction, index)
-
-        if result == :incorrect, do: {:cont, instr}, else: {:halt, num}
-    end)
-  end
-
-  defp process_modified_program(instructions, instruction, index) do
-    new_op_code = if instruction.op_code == "nop", do: "jmp", else: "nop"
-    modified_instructions =
-      Map.put(instructions, index, %{instruction | op_code: new_op_code})
-
-    initial_process_values = _initial_values(modified_instructions[0])
-
-    process_program(modified_instructions, initial_process_values)
-  end
-
   def format_input(input) do
     input
     |> String.split("\n", trim: true)
@@ -53,6 +23,14 @@ defmodule AdventOfCode.Day08 do
       formatted_instruction = format_instruction(instruction)
       Map.put(acc, index, formatted_instruction)
     end)
+  end
+
+  defp _initial_values(instruction) do
+    %ExecutionValues{
+      counter: 0,
+      accumulator: 0,
+      instruction: instruction
+    }
   end
 
   def format_instruction(instruction) do
@@ -121,4 +99,27 @@ defmodule AdventOfCode.Day08 do
       instruction: instructions[execution_values.counter + 1]
     }
   end
+
+  defp fix_file(instructions) do
+    Enum.reduce_while(instructions, instructions, fn
+      {_index, %{op_code: "acc"}}, instr ->
+        {:cont, instr}
+
+      {index, instruction}, instr ->
+        {result, num} = process_modified_program(instr, instruction, index)
+
+        if result == :incorrect, do: {:cont, instr}, else: {:halt, num}
+    end)
+  end
+
+  defp process_modified_program(instructions, instruction, index) do
+    new_op_code = if instruction.op_code == "nop", do: "jmp", else: "nop"
+    modified_instructions =
+      Map.put(instructions, index, %{instruction | op_code: new_op_code})
+
+    initial_process_values = _initial_values(modified_instructions[0])
+
+    process_program(modified_instructions, initial_process_values)
+  end
+
 end
