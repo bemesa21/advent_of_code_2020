@@ -1,12 +1,38 @@
 defmodule AdventOfCode.Day08 do
   def part1(input) do
+    {:incorrect, accumulator} =
     input
     |> format_input()
-    |> IO.inspect(label: :formatted_input)
     |> process_program(0, 0)
+    accumulator
   end
 
-  def part2(args) do
+  def part2(input) do
+    input
+    |> format_input()
+    |> fix_file()
+  end
+
+  def fix_file(instructions) do
+    Enum.reduce_while(instructions, instructions, fn({index, instruction}, accumulator) ->
+      if instruction.instruction == "jmp" or instruction.instruction == "nop" do
+        modified_instruction =
+        if instruction.instruction == "nop" do
+          modified_instruction = Map.put(accumulator, index, %{instruction | instruction: "jmp"})
+        else 
+          modified_instruction = Map.put(accumulator, index, %{instruction | instruction: "nop"})
+        end
+        {result, num} = process_program(modified_instruction, 0,0)
+        if result == :incorrect do
+          {:cont, accumulator}
+        else
+          {:halt, num}
+        end
+      else
+        {:cont, accumulator}
+      end
+    end)
+  
   end
 
   def format_input(input) do
@@ -35,10 +61,11 @@ defmodule AdventOfCode.Day08 do
           visited?: false
         }
 
-      _ ->
+      "nop " <> num ->
         %{
           instruction: "nop",
-          visited?: false
+          visited?: false,
+          number: String.to_integer(num)
         }
     end
   end
@@ -47,7 +74,12 @@ defmodule AdventOfCode.Day08 do
     instruction = instructions[counter]
 
     if(is_nil(instruction) or instruction.visited?) do
-      accumulator
+      if(is_nil(instruction)) do 
+        {:correct, accumulator}
+
+      else
+        {:incorrect, accumulator}
+      end
     else
       case instruction do
         %{instruction: "acc", number: number} ->

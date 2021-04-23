@@ -6,16 +6,13 @@ defmodule AdventOfCode.Day08Test do
   test "part1" do
     input = "nop +0\nacc +1\njmp +4\nacc +3\njmp -3\nacc -99\nacc +1\njmp -4\nacc +6"
     result = Day08.part1(input)
-
     assert result == 5
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
+    input = "nop +0\nacc +1\njmp +4\nacc +3\njmp -3\nacc -99\nacc +1\njmp -4\nacc +6"
     result = Day08.part2(input)
-
-    assert result
+    assert result == 8
   end
 
   test "format a instruction jmp should return a map with three elements" do
@@ -43,7 +40,8 @@ defmodule AdventOfCode.Day08Test do
 
     assert result == %{
              instruction: "nop",
-             visited?: false
+             visited?: false,
+             number: 0
            }
   end
 
@@ -59,7 +57,8 @@ defmodule AdventOfCode.Day08Test do
                },
                1 => %{
                  instruction: "nop",
-                 visited?: false
+                 visited?: false,
+                 number: 0
                }
              }
   end
@@ -69,14 +68,14 @@ defmodule AdventOfCode.Day08Test do
       Day08.format_input("acc -3")
       |> Day08.process_program(0, 0)
 
-    assert result == -3
+    assert result == {:correct, -3}
   end
 
   test "A program with just an nop instruction should return 1" do
     result =
-      Day08.format_input("nop + 0")
+      Day08.format_input("nop +0")
       |> Day08.process_program(0, 0)
 
-    assert result == 0
+    assert result == {:correct, 0}
   end
 end
