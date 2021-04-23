@@ -2,6 +2,7 @@ defmodule AdventOfCode.Day08Test do
   use ExUnit.Case
 
   alias AdventOfCode.Day08
+  alias AdventOfCode.Utils.Day08.ExecutionValues
 
   test "part1" do
     input = "nop +0\nacc +1\njmp +4\nacc +3\njmp -3\nacc -99\nacc +1\njmp -4\nacc +6"
@@ -46,7 +47,7 @@ defmodule AdventOfCode.Day08Test do
   end
 
   test "format a string of instructions should return an indexed map" do
-    result = Day08.format_input("acc -3\nnop -0 ")
+    result = Day08.format_input("acc -3\nnop -0")
 
     assert result ==
              %{
@@ -64,18 +65,26 @@ defmodule AdventOfCode.Day08Test do
   end
 
   test "A program with just an acc +3 instruction should return 3" do
-    result =
-      Day08.format_input("acc -3")
-      |> Day08.process_program(0, 0)
+    instructions = Day08.format_input("acc -3")
 
-    assert result == {:correct, -3}
+    params = %ExecutionValues{
+      counter: 0,
+      accumulator: 0,
+      instruction: instructions[0]
+    }
+
+    assert Day08.process_program(instructions, params) == {:correct, -3}
   end
 
   test "A program with just an nop instruction should return 1" do
-    result =
-      Day08.format_input("nop +0")
-      |> Day08.process_program(0, 0)
+    instructions = Day08.format_input("nop +0")
 
-    assert result == {:correct, 0}
+    params = %ExecutionValues{
+      counter: 0,
+      accumulator: 0,
+      instruction: instructions[0]
+    }
+
+    assert Day08.process_program(instructions, params) == {:correct, 0}
   end
 end

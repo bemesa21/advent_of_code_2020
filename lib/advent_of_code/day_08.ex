@@ -1,9 +1,17 @@
 defmodule AdventOfCode.Day08 do
+  alias AdventOfCode.Utils.Day08.ExecutionValues
+
   def part1(input) do
-    {:incorrect, accumulator} =
-    input
-    |> format_input()
-    |> process_program(0, 0)
+    instructions = format_input(input)
+
+    params = %ExecutionValues{
+      counter: 0,
+      accumulator: 0,
+      instruction: instructions[0]
+    }
+
+    {:incorrect, accumulator} = process_program(instructions, params)
+
     accumulator
   end
 
@@ -14,15 +22,25 @@ defmodule AdventOfCode.Day08 do
   end
 
   def fix_file(instructions) do
-    Enum.reduce_while(instructions, instructions, fn({index, instruction}, accumulator) ->
+    Enum.reduce_while(instructions, instructions, fn {index, instruction}, accumulator ->
       if instruction.instruction == "jmp" or instruction.instruction == "nop" do
         modified_instruction =
-        if instruction.instruction == "nop" do
-          modified_instruction = Map.put(accumulator, index, %{instruction | instruction: "jmp"})
-        else 
-          modified_instruction = Map.put(accumulator, index, %{instruction | instruction: "nop"})
-        end
-        {result, num} = process_program(modified_instruction, 0,0)
+          if instruction.instruction == "nop" do
+            modified_instruction =
+              Map.put(accumulator, index, %{instruction | instruction: "jmp"})
+          else
+            modified_instruction =
+              Map.put(accumulator, index, %{instruction | instruction: "nop"})
+          end
+
+        params = %ExecutionValues{
+          counter: 0,
+          accumulator: 0,
+          instruction: modified_instruction[0]
+        }
+
+        {result, num} = process_program(modified_instruction, params)
+
         if result == :incorrect do
           {:cont, accumulator}
         else
@@ -32,7 +50,6 @@ defmodule AdventOfCode.Day08 do
         {:cont, accumulator}
       end
     end)
-  
   end
 
   def format_input(input) do
@@ -70,30 +87,45 @@ defmodule AdventOfCode.Day08 do
     end
   end
 
-  def process_program(instructions, counter, accumulator) do
-    instruction = instructions[counter]
+  def process_program(_instructions, %{instruction: instruction} = execution_values)
+      when is_nil(instruction) do
+    {:correct, execution_values.accumulator}
+  end
 
-    if(is_nil(instruction) or instruction.visited?) do
-      if(is_nil(instruction)) do 
-        {:correct, accumulator}
+  def process_program(_instructions, %{instruction: instruction} = execution_values)
+      when instruction.visited? do
+    {:incorrect, execution_values.accumulator}
+  end
 
-      else
-        {:incorrect, accumulator}
-      end
-    else
-      case instruction do
-        %{instruction: "acc", number: number} ->
-          instructions = Map.put(instructions, counter, %{instruction | visited?: true})
-          process_program(instructions, counter + 1, accumulator + number)
+  def process_program(instructions, %{instruction: instruction} = execution_values) do
+    instructions =
+      Map.put(instructions, execution_values.counter, %{instruction | visited?: true})
 
-        %{instruction: "jmp", number: number} ->
-          instructions = Map.put(instructions, counter, %{instruction | visited?: true})
-          process_program(instructions, counter + number, accumulator)
+    execution_values = process_instruction(instructions, instruction, execution_values)
+    process_program(instructions, execution_values)
+  end
 
-        %{instruction: "nop"} ->
-          instructions = Map.put(instructions, counter, %{instruction | visited?: true})
-          process_program(instructions, counter + 1, accumulator)
-      end
-    end
+  defp process_instruction(instructions, %{instruction: "acc", number: number}, execution_values) do
+    %ExecutionValues{
+      counter: execution_values.counter + 1,
+      accumulator: execution_values.accumulator + number,
+      instruction: instructions[execution_values.counter + 1]
+    }
+  end
+
+  defp process_instruction(instructions, %{instruction: "jmp", number: number}, execution_values) do
+    %ExecutionValues{
+      counter: execution_values.counter + number,
+      accumulator: execution_values.accumulator,
+      instruction: instructions[execution_values.counter + number]
+    }
+  end
+
+  defp process_instruction(instructions, %{instruction: "nop"}, execution_values) do
+    %ExecutionValues{
+      counter: execution_values.counter + 1,
+      accumulator: execution_values.accumulator,
+      instruction: instructions[execution_values.counter + 1]
+    }
   end
 end
