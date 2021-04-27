@@ -59,20 +59,69 @@ defmodule AdventOfCode.Day10Test do
     assert Day10.part1(input) == 220
   end
 
-  @tag :skip
-  test "part2" do
-    input = nil
-    result = Day10.part2(input)
+  test "part 2: Test tiny example input" do
+    input = """
+    16
+    10
+    15
+    5
+    1
+    11
+    7
+    19
+    6
+    12
+    4
+    """
 
-    assert result
+    assert Day10.part2(input) == 8
   end
 
-  test "the difference between 4 and 2 is valid" do
-    assert Day10.is_valid_difference?(4, 2) == true
+  test "Part2: Test medium example input" do
+    input = """
+    28
+    33
+    18
+    42
+    31
+    14
+    46
+    20
+    48
+    47
+    24
+    23
+    49
+    45
+    19
+    38
+    39
+    11
+    1
+    32
+    25
+    35
+    8
+    17
+    7
+    9
+    4
+    2
+    34
+    10
+    3
+    """
+
+    assert Day10.part2(input) == 19208
   end
 
-  test "the difference between 4 and 1 is valid" do
-    assert Day10.is_valid_difference?(4, 1) == true
+
+  test "the difference between 2 and 4 is valid" do
+    assert Day10.is_valid_difference?(2, 4) == true
+  end
+
+  test "the difference between 1 and 4 is valid" do
+    assert Day10.is_valid_difference?(1, 4) == true
   end
 
   test "the difference between 1 and 5 is invalid" do

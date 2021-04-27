@@ -14,7 +14,14 @@ defmodule AdventOfCode.Day10 do
     differences[1] * differences[3]
   end
 
-  def part2(args) do
+  def part2(input) do
+      formatted_input = format_input(input)
+      max_jolt =  Enum.max(formatted_input)
+
+      [0] ++ formatted_input
+      |> construct_all_adapters(max_jolt)
+      |> Enum.count()
+
   end
 
   def format_input(input) do
@@ -28,7 +35,7 @@ defmodule AdventOfCode.Day10 do
   end
 
   def is_valid_difference?(num1, num2) do
-    (num1 - num2) in -3..3
+    (num2 - num1) in 1..3
   end
 
   def construct_adapter([add1] = _adapters), do: [add1]
@@ -54,6 +61,27 @@ defmodule AdventOfCode.Day10 do
     [hd | result]
   end
 
+  def construct_all_adapters([add1] = _adapters, num) when add1 == num, do: [[add1]]
+
+  def construct_all_adapters([_add1] = _adapters, _num), do: false
+
+  def construct_all_adapters([hd | _tail], num) when num == hd, do: [[hd]]
+
+  def construct_all_adapters([hd | tail] = _adapters, num) do
+    valid_options = Enum.filter(tail, &is_valid_difference?(hd, &1))
+    posible = posible_combinations(valid_options, tail)
+      Enum.reduce(posible, [], fn {key, [x]}, acc ->
+        result = construct_all_adapters([key | x], num)
+        if result == false or result == [] do
+          acc
+        else
+          result = Enum.map(result, fn x ->
+              [hd | x]
+          end)
+          result ++ acc
+        end
+      end)
+  end
   def posible_combinations(valid_options, adapters) do
     Enum.group_by(valid_options, & &1, &Enum.reject(adapters, fn x -> &1 == x end))
   end
