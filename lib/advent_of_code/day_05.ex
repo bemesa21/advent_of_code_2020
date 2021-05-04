@@ -9,7 +9,15 @@ defmodule AdventOfCode.Day05 do
     |> Enum.max()
   end
 
-  def part2(args) do
+  def part2(input) do
+    rows = Enum.to_list(0..127)
+    columns = Enum.to_list(0..7)
+
+    input
+    |> format_input()
+    |> Enum.map(&find_id(&1, rows, columns))
+    |> Enum.sort()
+    |> find_missing_number()
   end
 
   def format_input(input) do
@@ -19,7 +27,7 @@ defmodule AdventOfCode.Day05 do
   end
 
   @doc """
-  Split a string of type "BFFFBBFRRR" into a tuple with 
+  Split a string of type "BFFFBBFRRR" into a tuple with
   the first 7 letters, and the last letters
 
   ## Examples
@@ -52,5 +60,15 @@ defmodule AdventOfCode.Day05 do
   def reduce_range(letter, initial_range) when letter == "B" or letter == "R" do
     {_lower, upper_part} = Enum.split(initial_range, div(length(initial_range), 2))
     upper_part
+  end
+
+  def find_missing_number([hd | tail]) do
+    next = hd(tail)
+
+    if next == hd + 1 do
+      find_missing_number(tail)
+    else
+      hd + 1
+    end
   end
 end
