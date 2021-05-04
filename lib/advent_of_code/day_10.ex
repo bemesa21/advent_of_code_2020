@@ -98,18 +98,18 @@ defmodule AdventOfCode.Day10 do
             {caminos, acc + caminos[a]}
           else
             {caminos, result} = count_posible_adapters(tree, a, caminos)
+            caminos =
+              if !caminos[a] do
+                Map.put(caminos, a, result)
+              else
+                caminos
+              end
             {caminos, acc + result}
           end
         end)
 
       # IO.inspect({adapter, result})
 
-      caminos =
-        if !caminos[adapter] do
-          Map.put(caminos, adapter, result)
-        else
-          caminos
-        end
 
       # IO.inspect({adapter, length, result})
       {caminos, result}
