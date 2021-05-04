@@ -4,11 +4,8 @@ defmodule AdventOfCode.Day10 do
       input
       |> format_input()
       |> Enum.sort()
-      # |> IO.inspect(label: :input)
       |> construct_adapter()
-      # |> IO.inspect(label: :adapter)
       |> find_differences()
-      # |> IO.inspect(label: :differences)
       |> group_differences()
 
     differences[1] * differences[3]
@@ -16,7 +13,7 @@ defmodule AdventOfCode.Day10 do
 
   def part2(input) do
     formatted_input = format_input(input)
-    tree = construct_tree([0|  formatted_input])
+    tree = construct_tree([0 | formatted_input])
     {_acc_adapters, result} = count_posible_adapters(tree, tree[0], %{})
     result
   end
@@ -61,50 +58,26 @@ defmodule AdventOfCode.Day10 do
     # end)
   end
 
-  def construct_adapters(_tree, [], num, current) when current == num, do: [[current]]
+  def count_posible_adapters(_tree, [], acc_adapters), do: {acc_adapters, 1}
 
-  def construct_adapters(_tree, [], _num, _current), do: false
-
-  def construct_adapters(tree, adapters, num, current_adapter) do
-    Enum.reduce(adapters, [], fn x, acc ->
-      result = construct_adapters(tree, tree[x], num, x)
-
-      if result == false or result == [] do
-        acc
+  def count_posible_adapters(tree, adapters, acc_adapters) do
+    Enum.reduce(adapters, {acc_adapters, 0}, fn a, {acc_adapters, acc} ->
+      if acc_adapters[a] do
+        {acc_adapters, acc + acc_adapters[a]}
       else
-        result =
-          Enum.map(result, fn x ->
-            [current_adapter | x]
-          end)
-
-        result ++ acc
+        adapters = tree[a]
+        {acc_adapters, result} = count_posible_adapters(tree, adapters, acc_adapters)
+        {acc_adapters(acc_adapters, a, result), acc + result}
       end
     end)
   end
 
-
-  def count_posible_adapters(_tree, [], acc_adapters), do: {acc_adapters, 1}
-
-
-  def count_posible_adapters(tree, adapters, acc_adapters) do
-    # IO.inspect(acc_adapters)
-        Enum.reduce(adapters, {acc_adapters, 0}, fn a, {acc_adapters, acc} ->
-          if acc_adapters[a] do
-            {acc_adapters, acc + acc_adapters[a]}
-          else
-            adapters = tree[a]
-            {acc_adapters, result} = count_posible_adapters(tree, adapters, acc_adapters)
-            {acc_adapters(acc_adapters, a, result), acc + result}
-          end
-        end)
-  end
-
   defp acc_adapters(adapters, adapter, number) do
-      if Map.has_key?(adapters, adapter) do
-        Map.put(adapters, adapter, number)
-      else
-        adapters
-      end
+    if Map.has_key?(adapters, adapter) do
+      Map.put(adapters, adapter, number)
+    else
+      adapters
+    end
   end
 
   def construct_tree(jolts) do
@@ -135,4 +108,27 @@ defmodule AdventOfCode.Day10 do
       end
     end)
   end
+
+  """
+    def construct_adapters(_tree, [], num, current) when current == num, do: [[current]]
+
+    def construct_adapters(_tree, [], _num, _current), do: false
+
+    def construct_adapters(tree, adapters, num, current_adapter) do
+      Enum.reduce(adapters, [], fn x, acc ->
+        result = construct_adapters(tree, tree[x], num, x)
+
+        if result == false or result == [] do
+          acc
+        else
+          result =
+            Enum.map(result, fn x ->
+              [current_adapter | x]
+            end)
+
+          result ++ acc
+        end
+      end)
+    end
+  """
 end
