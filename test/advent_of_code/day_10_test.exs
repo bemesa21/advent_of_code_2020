@@ -115,7 +115,6 @@ defmodule AdventOfCode.Day10Test do
     assert Day10.part2(input) == 19208
   end
 
-
   test "the difference between 2 and 4 is valid" do
     assert Day10.is_valid_difference?(2, 4) == true
   end

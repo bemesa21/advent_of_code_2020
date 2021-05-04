@@ -4,24 +4,22 @@ defmodule AdventOfCode.Day10 do
       input
       |> format_input()
       |> Enum.sort()
-      #|> IO.inspect(label: :input)
+      # |> IO.inspect(label: :input)
       |> construct_adapter()
-      #|> IO.inspect(label: :adapter)
+      # |> IO.inspect(label: :adapter)
       |> find_differences()
-      #|> IO.inspect(label: :differences)
+      # |> IO.inspect(label: :differences)
       |> group_differences()
 
     differences[1] * differences[3]
   end
 
   def part2(input) do
-      formatted_input = format_input(input)
-      max_jolt =  Enum.max(formatted_input)
-
-      [0] ++ formatted_input
-      |> construct_all_adapters(max_jolt)
-      |> Enum.count()
-
+    formatted_input = format_input(input)
+    max_jolt = Enum.max(formatted_input)
+    tree = construct_tree(formatted_input) |> IO.inspect(charlists: :as_lists)
+    valid_adapters = Enum.filter(formatted_input, &is_valid_difference?(0, &1))
+    construct_adapters(tree, valid_adapters, max_jolt, 0)
   end
 
   def format_input(input) do
@@ -61,29 +59,39 @@ defmodule AdventOfCode.Day10 do
     [hd | result]
   end
 
-  def construct_all_adapters([add1] = _adapters, num) when add1 == num, do: [[add1]]
-
-  def construct_all_adapters([_add1] = _adapters, _num), do: false
-
-  def construct_all_adapters([hd | _tail], num) when num == hd, do: [[hd]]
-
-  def construct_all_adapters([hd | tail] = _adapters, num) do
-    valid_options = Enum.filter(tail, &is_valid_difference?(hd, &1))
-    posible = posible_combinations(valid_options, tail)
-      Enum.reduce(posible, [], fn {key, [x]}, acc ->
-        result = construct_all_adapters([key | x], num)
-        if result == false or result == [] do
-          acc
-        else
-          result = Enum.map(result, fn x ->
-              [hd | x]
-          end)
-          result ++ acc
-        end
-      end)
-  end
   def posible_combinations(valid_options, adapters) do
     Enum.group_by(valid_options, & &1, &Enum.reject(adapters, fn x -> &1 == x end))
+    # Enum.reduce(valid_options, [], fn x, acc ->
+    #  [{x, Enum.reject(valid_options, fn y -> x == y end)} | acc]
+    # end)
+  end
+
+  def construct_adapters(_tree, [], num, current) when current == num, do: [[current]]
+
+  def construct_adapters(_tree, [], _num, _current), do: false
+
+  def construct_adapters(tree, adapters, num, current_adapter) do
+    Enum.reduce(adapters, [], fn x, acc ->
+      result = construct_adapters(tree, tree[x], num, x)
+
+      if result == false or result == [] do
+        acc
+      else
+        result =
+          Enum.map(result, fn x ->
+            [current_adapter | x]
+          end)
+
+        result ++ acc
+      end
+    end)
+  end
+
+  def construct_tree(jolts) do
+    Enum.reduce(jolts, %{}, fn j, acc ->
+      valid_options = Enum.filter(jolts, &is_valid_difference?(j, &1))
+      Map.put_new(acc, j, valid_options)
+    end)
   end
 
   def find_differences(jolts) do
