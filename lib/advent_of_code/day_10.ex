@@ -18,10 +18,17 @@ defmodule AdventOfCode.Day10 do
     result
   end
 
-  def format_input(input) do
+  defp format_input(input) do
     input
     |> String.split("\n", trim: true)
     |> Enum.map(&String.to_integer/1)
+  end
+
+  def construct_tree(jolts) do
+    Enum.reduce(jolts, %{}, fn j, acc ->
+      valid_options = Enum.filter(jolts, &is_valid_difference?(j, &1))
+      Map.put_new(acc, j, valid_options)
+    end)
   end
 
   def is_valid_difference?(num1, num2) when num1 == num2, do: false
@@ -58,35 +65,6 @@ defmodule AdventOfCode.Day10 do
     # end)
   end
 
-  def count_posible_adapters(_tree, [], acc_adapters), do: {acc_adapters, 1}
-
-  def count_posible_adapters(tree, adapters, acc_adapters) do
-    Enum.reduce(adapters, {acc_adapters, 0}, fn a, {acc_adapters, acc} ->
-      if acc_adapters[a] do
-        {acc_adapters, acc + acc_adapters[a]}
-      else
-        adapters = tree[a]
-        {acc_adapters, result} = count_posible_adapters(tree, adapters, acc_adapters)
-        {acc_adapters(acc_adapters, a, result), acc + result}
-      end
-    end)
-  end
-
-  defp acc_adapters(adapters, adapter, number) do
-    if Map.has_key?(adapters, adapter) do
-      Map.put(adapters, adapter, number)
-    else
-      adapters
-    end
-  end
-
-  def construct_tree(jolts) do
-    Enum.reduce(jolts, %{}, fn j, acc ->
-      valid_options = Enum.filter(jolts, &is_valid_difference?(j, &1))
-      Map.put_new(acc, j, valid_options)
-    end)
-  end
-
   def find_differences(jolts) do
     jolts = jolts ++ [List.last(jolts) + 3]
 
@@ -107,6 +85,28 @@ defmodule AdventOfCode.Day10 do
         Map.put_new(acc, x, 1)
       end
     end)
+  end
+
+  def count_posible_adapters(_tree, [], acc_adapters), do: {acc_adapters, 1}
+
+  def count_posible_adapters(tree, adapters, acc_adapters) do
+    Enum.reduce(adapters, {acc_adapters, 0}, fn a, {acc_adapters, acc} ->
+      if acc_adapters[a] do
+        {acc_adapters, acc + acc_adapters[a]}
+      else
+        adapters = tree[a]
+        {acc_adapters, result} = count_posible_adapters(tree, adapters, acc_adapters)
+        {acc_adapters(acc_adapters, a, result), acc + result}
+      end
+    end)
+  end
+
+  defp acc_adapters(adapters, adapter, number) do
+    if Map.has_key?(adapters, adapter) do
+      Map.put(adapters, adapter, number)
+    else
+      adapters
+    end
   end
 
   """
