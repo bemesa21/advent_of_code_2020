@@ -16,9 +16,8 @@ defmodule AdventOfCode.Day10 do
 
   def part2(input) do
     formatted_input = format_input(input)
-    # |> IO.inspect(charlists: :as_lists)
-    tree = construct_tree([0] ++ formatted_input)
-    {_caminos, result} = count_posible_adapters(tree, tree[0], %{})
+    tree = construct_tree([0|  formatted_input])
+    {_acc_adapters, result} = count_posible_adapters(tree, tree[0], %{})
     result
   end
 
@@ -28,13 +27,9 @@ defmodule AdventOfCode.Day10 do
     |> Enum.map(&String.to_integer/1)
   end
 
-  def is_valid_difference?(num1, num2) when num1 == num2 do
-    false
-  end
+  def is_valid_difference?(num1, num2) when num1 == num2, do: false
 
-  def is_valid_difference?(num1, num2) do
-    (num2 - num1) in 1..3
-  end
+  def is_valid_difference?(num1, num2), do: (num2 - num1) in 1..3
 
   def construct_adapter([add1] = _adapters), do: [add1]
 
@@ -87,35 +82,29 @@ defmodule AdventOfCode.Day10 do
     end)
   end
 
-  def count_posible_adapters(tree, adapters, caminos) do
-    # IO.inspect(caminos)
 
-    if adapters != [] do
-      {caminos, result} =
-        Enum.reduce(adapters, {caminos, 0}, fn a, {caminos, acc} ->
-          if caminos[a] do
-            {caminos, acc + caminos[a]}
+  def count_posible_adapters(_tree, [], acc_adapters), do: {acc_adapters, 1}
+
+
+  def count_posible_adapters(tree, adapters, acc_adapters) do
+    # IO.inspect(acc_adapters)
+        Enum.reduce(adapters, {acc_adapters, 0}, fn a, {acc_adapters, acc} ->
+          if acc_adapters[a] do
+            {acc_adapters, acc + acc_adapters[a]}
           else
             adapters = tree[a]
-            {caminos, result} = count_posible_adapters(tree, adapters, caminos)
-            caminos =
-              if !caminos[a] do
-                Map.put(caminos, a, result)
-              else
-                caminos
-              end
-            {caminos, acc + result}
+            {acc_adapters, result} = count_posible_adapters(tree, adapters, acc_adapters)
+            {acc_adapters(acc_adapters, a, result), acc + result}
           end
         end)
+  end
 
-      # IO.inspect({adapter, result})
-
-
-      # IO.inspect({adapter, length, result})
-      {caminos, result}
-    else
-      {caminos, 1}
-    end
+  defp acc_adapters(adapters, adapter, number) do
+      if Map.has_key?(adapters, adapter) do
+        Map.put(adapters, adapter, number)
+      else
+        adapters
+      end
   end
 
   def construct_tree(jolts) do
