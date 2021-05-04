@@ -16,10 +16,10 @@ defmodule AdventOfCode.Day10 do
 
   def part2(input) do
     formatted_input = format_input(input)
-    max_jolt = Enum.max(formatted_input)
-    tree = construct_tree(formatted_input) |> IO.inspect(charlists: :as_lists)
-    valid_adapters = Enum.filter(formatted_input, &is_valid_difference?(0, &1))
-    construct_adapters(tree, valid_adapters, max_jolt, 0)
+    # |> IO.inspect(charlists: :as_lists)
+    tree = construct_tree([0] ++ formatted_input)
+    {_caminos, result} = count_posible_adapters(tree, 0, %{})
+    result
   end
 
   def format_input(input) do
@@ -85,6 +85,37 @@ defmodule AdventOfCode.Day10 do
         result ++ acc
       end
     end)
+  end
+
+  def count_posible_adapters(tree, adapter, caminos) do
+    # IO.inspect(caminos)
+    adapters = tree[adapter]
+
+    if adapters != [] do
+      {caminos, result} =
+        Enum.reduce(adapters, {caminos, 0}, fn a, {caminos, acc} ->
+          if caminos[a] do
+            {caminos, acc + caminos[a]}
+          else
+            {caminos, result} = count_posible_adapters(tree, a, caminos)
+            {caminos, acc + result}
+          end
+        end)
+
+      # IO.inspect({adapter, result})
+
+      caminos =
+        if !caminos[adapter] do
+          Map.put(caminos, adapter, result)
+        else
+          caminos
+        end
+
+      # IO.inspect({adapter, length, result})
+      {caminos, result}
+    else
+      {caminos, 1}
+    end
   end
 
   def construct_tree(jolts) do
