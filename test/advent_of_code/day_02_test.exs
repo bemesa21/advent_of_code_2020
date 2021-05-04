@@ -14,9 +14,9 @@ defmodule AdventOfCode.Day02Test do
 
   test "part2" do
     result =
-    ["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"]
-    |> Enum.map(&AdventOfCode.Utils.format_params(&1))
-    |> Day02.part2()
+      ["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"]
+      |> Enum.map(&AdventOfCode.Utils.format_params(&1))
+      |> Day02.part2()
 
     assert result == 1
   end

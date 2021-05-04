@@ -114,12 +114,10 @@ defmodule AdventOfCode.Day08 do
 
   defp process_modified_program(instructions, instruction, index) do
     new_op_code = if instruction.op_code == "nop", do: "jmp", else: "nop"
-    modified_instructions =
-      Map.put(instructions, index, %{instruction | op_code: new_op_code})
+    modified_instructions = Map.put(instructions, index, %{instruction | op_code: new_op_code})
 
     initial_process_values = _initial_values(modified_instructions[0])
 
     process_program(modified_instructions, initial_process_values)
   end
-
 end
