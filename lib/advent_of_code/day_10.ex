@@ -18,7 +18,7 @@ defmodule AdventOfCode.Day10 do
     formatted_input = format_input(input)
     # |> IO.inspect(charlists: :as_lists)
     tree = construct_tree([0] ++ formatted_input)
-    {_caminos, result} = count_posible_adapters(tree, 0, %{})
+    {_caminos, result} = count_posible_adapters(tree, tree[0], %{})
     result
   end
 
@@ -87,9 +87,8 @@ defmodule AdventOfCode.Day10 do
     end)
   end
 
-  def count_posible_adapters(tree, adapter, caminos) do
+  def count_posible_adapters(tree, adapters, caminos) do
     # IO.inspect(caminos)
-    adapters = tree[adapter]
 
     if adapters != [] do
       {caminos, result} =
@@ -97,7 +96,8 @@ defmodule AdventOfCode.Day10 do
           if caminos[a] do
             {caminos, acc + caminos[a]}
           else
-            {caminos, result} = count_posible_adapters(tree, a, caminos)
+            adapters = tree[a]
+            {caminos, result} = count_posible_adapters(tree, adapters, caminos)
             caminos =
               if !caminos[a] do
                 Map.put(caminos, a, result)
